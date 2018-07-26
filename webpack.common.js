@@ -15,10 +15,10 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: ['node_modules'],
-                use: [{ loader: 'babel-loader' }],
+                use: [{ loader: 'babel-loader' },{ loader: 'eslint-loader'}],
             },
             {
-                test: /\.s(a|c)ss$/,
+                test: /\.scss$/,
                 use: [{
                     loader: 'style-loader'
                 },{
@@ -26,8 +26,38 @@ module.exports = {
                 }, {
                     loader: 'sass-loader'
                 }],
-            }
-        ]
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    require.resolve('style-loader'),
+                    {
+                        loader: require.resolve('css-loader'),
+                        options: {
+                            importLoaders: 1,
+                        },
+                    },
+                    {
+                        loader: require.resolve('postcss-loader'),
+                        options: {
+                            ident: 'postcss',
+                            plugins: () => [
+                                require('post-flexbugs-fixes'),
+                                autoprefixer({
+                                    browser: [
+                                        '>1%',
+                                        'last 4 versions',
+                                        'Firefox ESR',
+                                        'not ie> 9',
+                                    ],
+                                    flexbox: 'not-2009',
+                                }),
+                            ],
+                        },
+                    },
+                ],
+            },
+        ],
     },
     plugins: [
         new HtmlWebPackPlugin({
